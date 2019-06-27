@@ -1,0 +1,1 @@
+https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/plotly-extension

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{var.title}}</title>
+    <link href="src/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="src/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <p>
+      <table id="dts" class="display hover" style="width:100%" ></table>
+    </div>
+    <script src="src/jquery.min.js"></script>
+    <script src="src/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" class="init">
+      var dataSet = {{var.dataset}}; 
+      $(document).ready(function() {
+        $('#dts').DataTable( {
+          data: dataSet,
+          columns: [
+            {% for col in var.head %}{title:  "{{col}}" }, {% endfor %}
+          ]
+        } );
+       } );
+    </script>
+  </body>
+</html>
