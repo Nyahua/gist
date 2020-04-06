@@ -25,7 +25,7 @@ ServerAliveCountMax 120
 
 ## vps@vultr
 - https://my.vultr.com/  login: 140deport@outlook pw:FirstCar
-- ssh ip: `198.13.32.35` karibu@SFAE
+- ssh ip: `198.13.32.35` karibu@henglong@vultr
 - ```c
 ssh karibu@198.13.32.35 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 120"
 ```
