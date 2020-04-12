@@ -1,15 +1,4 @@
 ## your vps infomation here:
-## vps@banwagon
-- https://bwh8.net/clientarea.php?action=products
-- login: 140deport@outlook pw:DUTnum
-```c
-ssh karibu@144.34.151.173 -p 26017 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 120"
-```
-- diable timeout: add following line by `sudo nano /etc/ssh/ssh_config`
-```bash
-ServerAliveInterval 60
-ServerAliveCountMax 120
-```
 
 ## useful links:
 
@@ -28,4 +17,25 @@ ServerAliveCountMax 120
 - ssh ip: `198.13.32.35` karibu@henglong@vultr
 - ```c
 ssh karibu@198.13.32.35 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 120"
+```
+
+- diable timeout: add following line by `sudo nano /etc/ssh/ssh_config`
+```bash
+ServerAliveInterval 60
+ServerAliveCountMax 120
+```
+
+### Generate a new ED25519 SSH key pair:
+```bash
+ssh-keygen -t ed25519 -C "email@example.com"
+# Or, if you want to use RSA:
+ssh-keygen -t rsa -b 4096 -C "email@example.com"
+```
+The -C flag adds a comment in the key in case you have multiple of them and want to tell which is which. It is optional.
+
+copy the key, under WSL / GNU/Linux (requires the xclip package):
+```bash
+xclip -sel clip < ~/.ssh/id_ed25519.pub
+# Git Bash on Windows:
+cat ~/.ssh/id_ed25519.pub | clip
 ```

@@ -24,6 +24,11 @@ sudo systemctl reload nginx
 
 sudo systemctl disable nginx
 sudo systemctl enable nginx
+sudo systemctl status nginx
+
+# force remove
+sudo apt-get purge nginx nginx-common nginx-full
+sudo apt-get install nginx
 ```
 
 ## Step 1 — Installing the Components from the Ubuntu Repositories
@@ -33,16 +38,19 @@ sudo apt install python3-pip python3-dev build-essential libssl-dev libffi-dev p
 ```
 ## Step 2 — Creating a Python Virtual Environment
 ```bash
-sudo apt install python3.6-venv
+sudo apt install python3.8
+sudo apt install python3.8-venv
 mkdir wsgiportal
 cd wsgiportal
-python3.6 -m venv portalenv
+python3.8 -m venv portalenv
 source portalenv/bin/activate
 pip install wheel
-pip install uwsgi flask
+pip install gunicorn flask
 ```
 ### Creating a Sample App
-`nano portal.py`
+```bash
+nano portal.py
+```
 ```python
 from flask import Flask
 app = Flask(__name__)
@@ -59,7 +67,9 @@ sudo ufw allow 5000
 python portal.py
 ```
 ### Creating the WSGI Entry Point
-`nano wsgi.py`
+```bash
+nano wsgi.py
+```
 ```python
 from portal import app
 
@@ -68,7 +78,7 @@ if __name__ == "__main__":
 ```
 We can do this by simply passing it the name of our entry point. This is constructed as the name of the module (minus the `.py` extension), plus the name of the callable within the application. In our case, this is `wsgi:app`.
 ```bash
-uwsgi --socket 0.0.0.0:5000 --protocol=http -w wsgi:app
+gunicorn --bind 0.0.0.0:5000 wsgi:app
 ```
 
 We’re now done with our virtual environment, so we can deactivate it:
@@ -79,29 +89,12 @@ deactivate
 
 # Creating a WSGI Configuration File
 ```bash
-nano portal.ini
-```
-```json
-[uwsgi]
-module = wsgi:app
-
-master = true
-processes = 5
-
-socket = portal.sock
-chmod-socket = 660
-vacuum = true
-
-die-on-term = true
-```
-
-```
 mkdir config
 nano config/portal.service
 ```
 ```json
 [Unit]
-Description=uWSGI instance to serve portal
+Description=Gunicorn instance to serve portal
 After=network.target
 
 [Service]
@@ -109,10 +102,17 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/wsgiportal
 Environment="PATH=/home/ubuntu/wsgiportal/portalenv/bin"
-ExecStart=/home/ubuntu/wsgiportal/portalenv/bin/uwsgi  --ini portal.ini
+ExecStart=/home/ubuntu/wsgiportal/portalenv/bin/gunicorn --workers 3 --bind unix:portal.sock -m 007 wsgi:app
 
 [Install]
 WantedBy=multi-user.target
+```
+[Typically in ubuntu, nginx runs as www-data. If defined www-data as the group for gunicorn, you can solve this problem by:]
+(https://stackoverflow.com/questions/41951792/gunicorn-and-django-error-permission-denied-for-sock)
+```bash
+chmod g+x /home/ubuntu/
+chmod g+r /home/ubuntu/
+sudo chgrp www-data /home/ubuntu/
 ```
 ```bash
 sudo cp config/portal.service /etc/systemd/system/
@@ -128,7 +128,7 @@ nano config/portal
 ```json
 server {
     listen 80;
-    server_name mindsphere.cloud www.mindsphere.cloud;
+    server_name 111.229.0.74;
 
     location / {
         include proxy_params;
@@ -149,8 +149,5 @@ sudo systemctl restart nginx
 sudo less /var/log/nginx/error.log # checks the Nginx error logs. 
 sudo less /var/log/nginx/access.log # checks the Nginx access logs.
 sudo journalctl -u nginx # checks the Nginx process logs.
-sudo journalctl -u myproject  # checks your Flask app’s Gunicorn logs.
+sudo journalctl -u portal  # checks your Flask app’s Gunicorn logs.
 ```
-
-
-
