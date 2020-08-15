@@ -1,0 +1,3 @@
+- [How to install Visual Studio Code on a Raspberry Pi 4 in minutes](https://www.hanselman.com/blog/HowToInstallVisualStudioCodeOnARaspberryPi4InMinutes.aspx)
+- [How to install Python 3.8 on Raspberry Pi (Raspbian)](https://installvirtual.com/how-to-install-python-3-8-on-raspberry-pi-raspbian/)
+- [Connect Raspberry Pi to laptop PC in 4 simple steps (internet too)](https://notenoughtech.com/raspberry-pi/connect-raspberrypi-pc/#:~:text=%20Connect%20Raspberry%20Pi%20to%20laptop%20PC%20in,note%20that...%204%20Step%204%20Connect%20More%20)
